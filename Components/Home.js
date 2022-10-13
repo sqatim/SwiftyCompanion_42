@@ -1,7 +1,14 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import { useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
+import { getTokenFromStorage } from "../Utils/data";
 
 export default function Home() {
+  useEffect(() => {
+    setTimeout(() => {
+      getTokenFromStorage().then((value) => console.log(value));
+    }, 3000);
+  }, []);
   return (
     <View style={styles.container}>
       <Text>salam a drari</Text>

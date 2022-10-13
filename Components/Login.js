@@ -3,6 +3,7 @@ import { useAuthRequest, makeRedirectUri } from "expo-auth-session";
 import { useEffect, useState } from "react";
 import * as WebBrowser from "expo-web-browser";
 import { useNavigate } from "react-router-native";
+import { fetchToken } from "../Utils/data";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -16,25 +17,29 @@ export default function Login() {
     {
       clientId:
         "206fee68cc46139632092b796bfb14ed8b572f45c6a5e84228a4163d2f73644a",
-      redirectUri: "exp://192.168.99.11:19000",
+      redirectUri: "exp://192.168.218.240:19000",
     },
     discovery
   );
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
-  useEffect(() => {
-    // const responseObj = JSON.parse(response);
-    // console.log("response:", response.type);
-    console.log("loader:", loader);
-    if (response?.type == "success") {
-      console.log("yeah");
-    }
-  }, [response]);
+  // useEffect(() => {
+  //   console.log("loader:", loader);
+  //   if (response?.type == "success") {
+  //     // console.log(response.params.code);
+  //     // console.log("yeah:", response);
+  //   }
+  // }, [response]);
   const onPressLearnMore = () => {
     setLoader(true);
     promptAsync().then((value) => {
       console.log("value:", value);
-      navigate("/home", { replace: true });
+      fetchToken(value.params.code)
+      .then((value) => {
+          navigate("/home", { replace: true });
+          // console.log(value.data);
+        })
+        .catch((error) => console.log("error:", error));
     });
   };
   return (
