@@ -1,9 +1,18 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useAuthRequest, makeRedirectUri } from "expo-auth-session";
 import { useEffect, useState } from "react";
 import * as WebBrowser from "expo-web-browser";
 import { useNavigate } from "react-router-native";
 import { fetchToken } from "../Utils/data";
+import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } from "@env";
+import styled from "styled-components/native";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -15,9 +24,8 @@ const discovery = {
 export default function Login() {
   const [request, response, promptAsync] = useAuthRequest(
     {
-      clientId:
-        "206fee68cc46139632092b796bfb14ed8b572f45c6a5e84228a4163d2f73644a",
-      redirectUri: "exp://192.168.218.240:19000",
+      clientId: CLIENT_ID,
+      redirectUri: REDIRECT_URL,
     },
     discovery
   );
@@ -35,19 +43,27 @@ export default function Login() {
     promptAsync().then((value) => {
       console.log("value:", value);
       fetchToken(value.params.code)
-      .then((value) => {
+        .then((value) => {
+          console.log("test:", value.data);
           navigate("/home", { replace: true });
-          // console.log(value.data);
         })
         .catch((error) => console.log("error:", error));
     });
   };
   return (
-    <View style={styles.container}>
-      {!loader && (
+    <ContainerStyle>
+      {/* <ImageBackgroundStyle
+        resizeMode="cover"
+        source={require("../assets/background.jpg")}
+        // style={{ flex: 1 }}
+      > */}
+      {!loader ? (
         <Button onPress={onPressLearnMore} title="Learn More" color="#841584" />
+      ) : (
+        <ActivityIndicator size="large"></ActivityIndicator>
       )}
-    </View>
+      {/* </ImageBackgroundStyle> */}
+    </ContainerStyle>
   );
 }
 
@@ -59,3 +75,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+const TitleStyle = styled.Text`
+  flex: 1;
+`;
+const ContainerStyle = styled.View`
+  /* background-color: red; */
+  align-items: center;
+  /* justify-content: center; */
+  flex: 1;
+`;
+
+const ImageBackgroundStyle = styled.ImageBackground`
+  flex: 1;
+  justify-content: center;
+  width: 100%;
+`;
