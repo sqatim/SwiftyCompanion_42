@@ -31,15 +31,10 @@ export default function Login() {
   );
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   console.log("loader:", loader);
-  //   if (response?.type == "success") {
-  //     // console.log(response.params.code);
-  //     // console.log("yeah:", response);
-  //   }
-  // }, [response]);
+
   const onPressLearnMore = () => {
     setLoader(true);
+    console.log("test");
     promptAsync().then((value) => {
       console.log("value:", value);
       fetchToken(value.params.code)
@@ -52,42 +47,38 @@ export default function Login() {
   };
   return (
     <ContainerStyle>
-      {/* <ImageBackgroundStyle
-        resizeMode="cover"
-        source={require("../assets/background.jpg")}
-        // style={{ flex: 1 }}
-      > */}
+      <TitleStyle>Swifty Companion</TitleStyle>
       {!loader ? (
-        <Button onPress={onPressLearnMore} title="Learn More" color="#841584" />
+        <ButtonStyle onPress={onPressLearnMore}>
+          <ButtonText>Login</ButtonText>
+        </ButtonStyle>
       ) : (
         <ActivityIndicator size="large"></ActivityIndicator>
       )}
-      {/* </ImageBackgroundStyle> */}
     </ContainerStyle>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
-
 const TitleStyle = styled.Text`
-  flex: 1;
+  font-size: 35px;
+  margin-bottom: 50px;
+  font-weight: 700;
+`;
+
+const ButtonStyle = styled.TouchableOpacity`
+  border-radius: 10px;
+  padding: 10px 20px;
+  background-color: #841584;
+`;
+
+const ButtonText = styled.Text`
+  font-size: 18px;
+  color: #fff;
+  font-weight: bold;
+  align-self: center;
+  text-transform: uppercase;
 `;
 const ContainerStyle = styled.View`
-  /* background-color: red; */
   align-items: center;
-  /* justify-content: center; */
-  flex: 1;
-`;
-
-const ImageBackgroundStyle = styled.ImageBackground`
-  flex: 1;
-  justify-content: center;
-  width: 100%;
+  flex: 2;
 `;

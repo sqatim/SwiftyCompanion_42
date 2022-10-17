@@ -1,17 +1,35 @@
-import React from "react";
-import { Image, Text, View } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import React, { useState } from "react";
+import { Image, StatusBar, Text, View } from "react-native";
 import { Outlet } from "react-router-native";
 import styled from "styled-components/native";
 
+const STYLES = ["default", "dark-content", "light-content"];
+const TRANSITIONS = ["fade", "slide", "none"];
+
 export default function Layout({ children }) {
+  const [hidden, setHidden] = useState(false);
+  const [statusBarStyle, setStatusBarStyle] = useState(STYLES[1]);
+  const [statusBarTransition, setStatusBarTransition] = useState(
+    TRANSITIONS[0]
+  );
   return (
     <LayoutStyle>
-      <NavBarStyle>
-        {/* <ImageStyle source={require("../assets/Intra42.svg")}></ImageStyle> */}
-        {/* <Image></Image> */}
-        {/* <Image></Image> */}
-      </NavBarStyle>
+      <TopSideStyle>
+        <StatusBar
+          animated={true}
+          backgroundColor="white"
+          barStyle={statusBarStyle}
+          showHideTransition={statusBarTransition}
+          hidden={hidden}
+        />
+        <NavBarStyle>
+          <ImageStyle source={require("../assets/Intra42.png")}></ImageStyle>
+          <ImageStyle source={require("../assets/lightMode.png")}></ImageStyle>
+          {/* <ImageStyle
+            source={require("../assets/LogoutLight.png")}
+          ></ImageStyle> */}
+        </NavBarStyle>
+      </TopSideStyle>
       <Outlet />
     </LayoutStyle>
   );
@@ -19,17 +37,24 @@ export default function Layout({ children }) {
 
 const LayoutStyle = styled.View`
   flex: 1;
-  background-color: black;
-  margin-top: 40px;
+  /* background-color: black; */
+  /* margin-top: 40px; */
+`;
+
+const TopSideStyle = styled.View`
+  flex: 1;
 `;
 const NavBarStyle = styled.View`
-  flex: 1;
-  background-color: red;
+  /* flex: 1; */
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 15px 0px;
+  /* background-color: red; */
 `;
 
 const ImageStyle = styled.Image`
-  width: 50px;
-  height: 50px;
-  margin-top: 100px;
+  width: 35px;
+  height: 35px;
+  /* margin-top: 100px; */
   /* background-color: white; */
 `;
