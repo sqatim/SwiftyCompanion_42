@@ -32,7 +32,7 @@ export default function Login() {
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
 
-  const onPressLearnMore = () => {
+  const onPressLogin = () => {
     setLoader(true);
     console.log("test");
     promptAsync().then((value) => {
@@ -49,7 +49,7 @@ export default function Login() {
     <ContainerStyle>
       <TitleStyle>Swifty Companion</TitleStyle>
       {!loader ? (
-        <ButtonStyle onPress={onPressLearnMore}>
+        <ButtonStyle onPress={onPressLogin}>
           <ButtonText>Login</ButtonText>
         </ButtonStyle>
       ) : (
@@ -80,5 +80,6 @@ const ButtonText = styled.Text`
 `;
 const ContainerStyle = styled.View`
   align-items: center;
-  flex: 2;
+  flex: 1;
+  margin-top: 200px;
 `;

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Image, StatusBar, Text, View } from "react-native";
-import { Outlet } from "react-router-native";
+import React, { useEffect, useState } from "react";
+import { StatusBar, TouchableOpacity } from "react-native";
+import { Outlet, useLocation, useNavigate } from "react-router-native";
 import styled from "styled-components/native";
+import * as SecureStore from "expo-secure-store";
 
 const STYLES = ["default", "dark-content", "light-content"];
 const TRANSITIONS = ["fade", "slide", "none"];
@@ -12,6 +13,19 @@ export default function Layout({ children }) {
   const [statusBarTransition, setStatusBarTransition] = useState(
     TRANSITIONS[0]
   );
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const logOutPress = () => {
+    SecureStore.deleteItemAsync("token").then(() => {
+      console.log("logout");
+      navigate("/", { replace: true });
+    });
+  };
+
+  const homePress = () => {
+    navigate("/", { replace: true });
+  };
   return (
     <LayoutStyle>
       <TopSideStyle>
@@ -23,11 +37,21 @@ export default function Layout({ children }) {
           hidden={hidden}
         />
         <NavBarStyle>
-          <ImageStyle source={require("../assets/Intra42.png")}></ImageStyle>
-          <ImageStyle source={require("../assets/lightMode.png")}></ImageStyle>
-          {/* <ImageStyle
-            source={require("../assets/LogoutLight.png")}
-          ></ImageStyle> */}
+          <TouchableOpacity onPress={homePress}>
+            <ImageStyle source={require("../assets/Intra42.png")}></ImageStyle>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <ImageStyle
+              source={require("../assets/lightMode.png")}
+            ></ImageStyle>
+          </TouchableOpacity>
+          {location.pathname != "/" && (
+            <TouchableOpacity activeOpacity={0.8} onPress={logOutPress}>
+              <ImageStyle
+                source={require("../assets/LogoutLight.png")}
+              ></ImageStyle>
+            </TouchableOpacity>
+          )}
         </NavBarStyle>
       </TopSideStyle>
       <Outlet />
@@ -42,7 +66,7 @@ const LayoutStyle = styled.View`
 `;
 
 const TopSideStyle = styled.View`
-  flex: 1;
+  /* flex: 1; */
 `;
 const NavBarStyle = styled.View`
   /* flex: 1; */

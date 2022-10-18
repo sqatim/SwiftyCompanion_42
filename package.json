@@ -18,6 +18,7 @@
     "react": "18.0.0",
     "react-native": "0.69.6",
     "react-native-dotenv": "^3.3.1",
+    "react-native-dropdown-select-list": "^1.0.23",
     "react-native-svg": "12.3.0",
     "react-router-native": "^6.4.2",
     "styled-components": "^5.3.6"

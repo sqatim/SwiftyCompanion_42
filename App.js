@@ -6,6 +6,7 @@ import { NativeRouter, Route, Link, Routes } from "react-router-native";
 import Login from "./Components/Login";
 import Home from "./Components/Home";
 import Layout from "./Components/Layout";
+import User from "./Components/User";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route exact path="/" element={<Login />} />
           <Route exact path="/home" element={<Home />} />
+          <Route exact path="/User" element={<User />} />
         </Route>
       </Routes>
     </NativeRouter>
