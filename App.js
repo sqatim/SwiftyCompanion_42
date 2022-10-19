@@ -1,32 +1,21 @@
-import { Button, StyleSheet, Text, View } from "react-native";
-import { useAuthRequest, makeRedirectUri } from "expo-auth-session";
-import { useEffect } from "react";
-import * as WebBrowser from "expo-web-browser";
-import { NativeRouter, Route, Link, Routes } from "react-router-native";
 import Login from "./Components/Login";
 import Home from "./Components/Home";
 import Layout from "./Components/Layout";
 import User from "./Components/User";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AuthProviderContext, {
+  useAuthContext,
+} from "./Components/AuthProviderContext";
+import { useEffect } from "react";
+import Routes from "./Components/Routes";
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NativeRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route exact path="/" element={<Login />} />
-          <Route exact path="/home" element={<Home />} />
-          <Route exact path="/User" element={<User />} />
-        </Route>
-      </Routes>
-    </NativeRouter>
+    <AuthProviderContext>
+      <Routes />
+    </AuthProviderContext>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

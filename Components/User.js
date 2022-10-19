@@ -14,15 +14,15 @@ const selectCursus = (cursus) => {
   return cursusTmp;
 };
 
-export default function User() {
-  const { state } = useLocation();
-  const [selected, setSelected] = React.useState(state.cursus[0].cursus.name);
-  const data = selectCursus(state.cursus);
+export default function User({ navigation, route }) {
+  const userData = route.params;
+  const [selected, setSelected] = React.useState(userData.cursus[0].cursus.name);
+  const data = selectCursus(userData.cursus);
   const [level, setLevel] = useState(0);
   const [percentage, setPercentage] = useState(0);
   useEffect(() => {
     console.log("selected:", selected);
-    const result = state.cursus.find(
+    const result = userData.cursus.find(
       (element) => element.cursus.name == selected
     );
     setLevel(result.level);
@@ -31,23 +31,23 @@ export default function User() {
   return (
     <ContainerStyle>
       <WrapperStyle>
-        <PictureStyle source={{ uri: state.picture }}></PictureStyle>
+        <PictureStyle source={{ uri: userData.picture }}></PictureStyle>
         <DetailsContainerStyle>
           <DetailStyle>
             <DetailTextStyle>Login</DetailTextStyle>
-            <DetailTextStyle>{state.login}</DetailTextStyle>
+            <DetailTextStyle>{userData.login}</DetailTextStyle>
           </DetailStyle>
           <DetailStyle>
             <DetailTextStyle>Wallet</DetailTextStyle>
-            <DetailTextStyle>{state.wallet} ₳</DetailTextStyle>
+            <DetailTextStyle>{userData.wallet} ₳</DetailTextStyle>
           </DetailStyle>
           <DetailStyle>
             <DetailTextStyle>Location</DetailTextStyle>
-            <DetailTextStyle>{state.location || "Unavailable"}</DetailTextStyle>
+            <DetailTextStyle>{userData.location || "Unavailable"}</DetailTextStyle>
           </DetailStyle>
           <DetailStyle>
             <DetailTextStyle>Evaluation points</DetailTextStyle>
-            <DetailTextStyle>{state.correction}</DetailTextStyle>
+            <DetailTextStyle>{userData.correction}</DetailTextStyle>
           </DetailStyle>
         </DetailsContainerStyle>
       </WrapperStyle>
@@ -58,8 +58,8 @@ export default function User() {
             data={data}
             search={false}
             defaultOption={{
-              key: state.cursus[0].cursus.name,
-              value: state.cursus[0].cursus.name,
+              key: userData.cursus[0].cursus.name,
+              value: userData.cursus[0].cursus.name,
             }}
           />
         </SelectStyle>
