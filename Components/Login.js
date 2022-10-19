@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-native";
 import { fetchToken } from "../Utils/data";
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } from "@env";
 import styled from "styled-components/native";
+import { useAuthContext } from "./AuthProviderContext";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -21,7 +22,9 @@ const discovery = {
   tokenEndpoint: "https://api.intra.42.fr/oauth/token",
 };
 
-export default function Login() {
+export default function Login({ navigation }) {
+  let { state, signIn } = useAuthContext();
+
   const [request, response, promptAsync] = useAuthRequest(
     {
       clientId: CLIENT_ID,
@@ -30,21 +33,22 @@ export default function Login() {
     discovery
   );
   const [loader, setLoader] = useState(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const onPressLogin = () => {
     setLoader(true);
-    console.log("test");
-    promptAsync().then((value) => {
-      console.log("value:", value);
-      fetchToken(value.params.code)
-        .then((value) => {
-          console.log("test:", value.data);
-          navigate("/home", { replace: true });
-        })
+    promptAsync().then(async (value) => {
+      await signIn();
+      setLoader(false)
+      // fetchToken(value.params.code)
+      //   .then((value) => {
+      //     console.log("accesToken:", value.data.access_token);
+      //   }
+      //   )
         .catch((error) => console.log("error:", error));
     });
   };
+
   return (
     <ContainerStyle>
       <TitleStyle>Swifty Companion</TitleStyle>

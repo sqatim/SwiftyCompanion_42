@@ -3,6 +3,7 @@
     "name": "swifty-companion",
     "slug": "swifty-companion",
     "version": "1.0.0",
+    "scheme": "com.swifty.app",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

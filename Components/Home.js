@@ -12,18 +12,19 @@ import { getTokenFromStorage, getUser } from "../Utils/data";
 import styled from "styled-components/native";
 import { useNavigate } from "react-router-native";
 
-export default function Home() {
+export default function Home({ navigation }) {
   const [loader, setLoader] = useState(false);
   const [search, setSearch] = useState("");
   const [found, setFound] = useState(true);
-  const navigate = useNavigate();
-
+   SecureStore.deleteItemAsync("token");
   const onPressSearch = () => {
     if (search) {
       setLoader(true);
       getUser(search)
         .then((data) => {
-          navigate("/user", { replace: true, state: data });
+          navigation.navigate("User", data);
+          setLoader(false);
+          // navigate("/user", { replace: true, state: data });
         })
         .catch((error) => {
           console.log("error:", error);
