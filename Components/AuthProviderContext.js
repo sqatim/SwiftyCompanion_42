@@ -55,10 +55,11 @@ export default function AuthProviderContext({ children }) {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
-
       try {
-        userToken = await SecureStore.getItemAsync("token");
-        console.log("userToken:", userToken);
+        const tokenInfo = await SecureStore.getItemAsync("token");
+        const { access_token } = JSON.parse(tokenInfo);
+        userToken = access_token;
+        console.log("userToken:",tokenInfo)
       } catch (e) {
         console.log("error:", e);
         // Restoring token failed
@@ -90,6 +91,23 @@ export default function AuthProviderContext({ children }) {
             client_secret: CLIENT_SECRET,
             code: code,
             redirect_uri: `${REDIRECT_URL}`,
+          });
+        } catch (error) {
+          console.log("error:", error);
+        }
+        console.log("dispatch:", data.data);
+        const tokenInfo = JSON.stringify(data.data);
+        await SecureStore.setItemAsync("token", tokenInfo);
+        dispatch({ type: "SIGN_IN", token: data.data.access_token });
+      },
+      refreshToken: async (refreshToken) => {
+        let data;
+        try {
+          data = await axios.post(TOKEN_URL, {
+            grant_type: "refresh_token",
+            refresh_token: `${refreshToken}`,
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
           });
         } catch (error) {
           console.log("error:", error);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, Text, View } from "react-native";
+import { FlatList, Image, ScrollView, Text, View } from "react-native";
 import { useLocation } from "react-router-native";
 import styled from "styled-components/native";
 import SelectList from "react-native-dropdown-select-list";
@@ -16,10 +16,24 @@ const selectCursus = (cursus) => {
 
 export default function User({ navigation, route }) {
   const userData = route.params;
-  const [selected, setSelected] = React.useState(userData.cursus[0].cursus.name);
+  const [selected, setSelected] = React.useState(
+    userData.cursus[0].cursus.name
+  );
   const data = selectCursus(userData.cursus);
   const [level, setLevel] = useState(0);
   const [percentage, setPercentage] = useState(0);
+  const renderItem = ({ item }) => {
+    if (typeof item.final_mark == "number")
+      return (
+        <ProjectStyle>
+          <ProjectTitleStyle>{item.project.name}</ProjectTitleStyle>
+          <ProjectNoteStyle status={item.status} finalMark={item.final_mark}>
+            {item.final_mark}
+          </ProjectNoteStyle>
+        </ProjectStyle>
+      );
+    else return null;
+  };
   useEffect(() => {
     console.log("selected:", selected);
     const result = userData.cursus.find(
@@ -27,49 +41,61 @@ export default function User({ navigation, route }) {
     );
     setLevel(result.level);
     setPercentage(result.level.toString().split(".")[1]);
+    // console.log("projects:", userData.projects);
   }, [selected]);
   return (
-    <ContainerStyle>
-      <WrapperStyle>
-        <PictureStyle source={{ uri: userData.picture }}></PictureStyle>
-        <DetailsContainerStyle>
-          <DetailStyle>
-            <DetailTextStyle>Login</DetailTextStyle>
-            <DetailTextStyle>{userData.login}</DetailTextStyle>
-          </DetailStyle>
-          <DetailStyle>
-            <DetailTextStyle>Wallet</DetailTextStyle>
-            <DetailTextStyle>{userData.wallet} ₳</DetailTextStyle>
-          </DetailStyle>
-          <DetailStyle>
-            <DetailTextStyle>Location</DetailTextStyle>
-            <DetailTextStyle>{userData.location || "Unavailable"}</DetailTextStyle>
-          </DetailStyle>
-          <DetailStyle>
-            <DetailTextStyle>Evaluation points</DetailTextStyle>
-            <DetailTextStyle>{userData.correction}</DetailTextStyle>
-          </DetailStyle>
-        </DetailsContainerStyle>
-      </WrapperStyle>
-      <CursusStyle>
-        <SelectStyle>
-          <SelectList
-            setSelected={setSelected}
-            data={data}
-            search={false}
-            defaultOption={{
-              key: userData.cursus[0].cursus.name,
-              value: userData.cursus[0].cursus.name,
-            }}
-          />
-        </SelectStyle>
-        <LevelBarStyle>
-          <PercentageBarStyle percentage={percentage}></PercentageBarStyle>
-          <LevelTextStyle>level: {level}%</LevelTextStyle>
-        </LevelBarStyle>
-      </CursusStyle>
-      <Text>User</Text>
-    </ContainerStyle>
+    <ScrollView>
+      <ContainerStyle>
+        <WrapperStyle>
+          <PictureStyle source={{ uri: userData.picture }}></PictureStyle>
+          <DetailsContainerStyle>
+            <DetailStyle>
+              <DetailTextStyle>Login</DetailTextStyle>
+              <DetailTextStyle>{userData.login}</DetailTextStyle>
+            </DetailStyle>
+            <DetailStyle>
+              <DetailTextStyle>Wallet</DetailTextStyle>
+              <DetailTextStyle>{userData.wallet} ₳</DetailTextStyle>
+            </DetailStyle>
+            <DetailStyle>
+              <DetailTextStyle>Location</DetailTextStyle>
+              <DetailTextStyle>
+                {userData.location || "Unavailable"}
+              </DetailTextStyle>
+            </DetailStyle>
+            <DetailStyle>
+              <DetailTextStyle>Evaluation points</DetailTextStyle>
+              <DetailTextStyle>{userData.correction}</DetailTextStyle>
+            </DetailStyle>
+          </DetailsContainerStyle>
+        </WrapperStyle>
+        <CursusStyle>
+          <SelectStyle>
+            <SelectList
+              setSelected={setSelected}
+              data={data}
+              search={false}
+              defaultOption={{
+                key: userData.cursus[0].cursus.name,
+                value: userData.cursus[0].cursus.name,
+              }}
+            />
+          </SelectStyle>
+          <LevelBarStyle>
+            <PercentageBarStyle percentage={percentage}></PercentageBarStyle>
+            <LevelTextStyle>level: {level}%</LevelTextStyle>
+          </LevelBarStyle>
+        </CursusStyle>
+        <FlatList
+          data={userData.projects}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+        />
+        <TestStyle>
+          <Text>User</Text>
+        </TestStyle>
+      </ContainerStyle>
+    </ScrollView>
   );
 }
 
@@ -78,6 +104,7 @@ const ContainerStyle = styled.View`
   /* align-items: center; */
   flex: 1;
   padding: 15px;
+  background-color: white;
 `;
 
 const PictureStyle = styled.Image`
@@ -133,8 +160,37 @@ const LevelTextStyle = styled.Text`
   /* transform: translateY(50%); */
 `;
 
+const ProjectStyle = styled.View`
+  width: 100%;
+  justify-content: space-between;
+  padding: 15px;
+  background-color: #e9f3f8;
+  margin: 15px 0;
+  border-radius: 8px;
+`;
+const ProjectTitleStyle = styled.Text`
+  margin-bottom: 5px;
+  font-weight: 500;
+  font-size: 16px;
+`;
+const ProjectNoteStyle = styled.Text`
+  color: ${({ status, finalMark }) => {
+    // console.log("finalMark:", finalMark);
+    if (status == "in_progress") return "yellow";
+    else if ((status = "finished" && finalMark == 0)) return "red";
+    else return "green";
+  }};
+  align-self: flex-end;
+  font-weight: 500;
+  font-size: 18px;
+`;
+
 const CursusStyle = styled.View`
   /* flex-direction: row; */
+`;
+
+const TestStyle = styled.View`
+  height: 50px;
 `;
 
 const SelectStyle = styled.View`

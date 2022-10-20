@@ -40,9 +40,24 @@ export const getTokenFromStorage = async () => {
   return await SecureStore.getItemAsync("token");
 };
 
+const checkExpirationToken = async () => {
+  const tokenInfo = await getTokenFromStorage("token");
+  const date = new Date().getTime() / 1000;
+  console.log("token:",tokenInfo)
+  const { expires_in: expire, created_at: createdAt } = JSON.parse(tokenInfo);
+  console.log("-------------------------------------");
+  console.log("expire:", expire);
+  console.log("created at:", createdAt);
+  console.log("Date:", date);
+  console.log("-------------------------------------");
+  if (createdAt + expire > date) return 1;
+  else return 0;
+};
+
 export const getUser = async (user, token) => {
+  // console.log("result:", await checkExpirationToken());
+  console.log("test:",token);
   return new Promise(async (resolve, reject) => {
-    // await getTokenFromStorage().then(async (token) => {
     return axios
       .get(USER_URL + user, {
         headers: { Authorization: `Bearer ${token}` },
@@ -69,8 +84,9 @@ export const getUser = async (user, token) => {
         });
         resolve(data);
       })
-      .catch(() => {
-        reject("User not found!");
+      .catch((error) => {
+        console.log("error:error:", error)
+        reject("User not found!:");
       });
   });
   // });
