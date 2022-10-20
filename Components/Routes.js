@@ -15,9 +15,9 @@ export default function Routes() {
   // const linking = {
   //   prefixes: [prefix],
   // };
-  useEffect(() => {
-    // console.log("prefix:", prefix);
-  }, [state]);
+  // useEffect(() => {
+  //   console.log("prefix:", state);
+  // }, [state]);
   return (
     <NavigationContainer>
       <Stack.Navigator>

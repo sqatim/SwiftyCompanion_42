@@ -19,43 +19,59 @@ export const fetchToken = async (code) => {
   return data;
 };
 
+export const fetchNewToken = async () => {
+  console.log("server");
+  const data = await axios
+    .post(TOKEN_URL, {
+      grant_type: "client_credentials",
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      redirect_uri: `${REDIRECT_URL}`,
+    })
+    .then(() => {
+      console.log("jat ");
+    });
+  console.log("new fetch:", data);
+  // await SecureStore.setItemAsync("token", data.data.access_token);
+  // return data;
+};
+
 export const getTokenFromStorage = async () => {
   return await SecureStore.getItemAsync("token");
 };
 
-export const getUser = async (user) => {
+export const getUser = async (user, token) => {
   return new Promise(async (resolve, reject) => {
-    await getTokenFromStorage().then((token) => {
-      console.log("value:", token, "| user:", user);
-      return axios
-        .get(USER_URL + user, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .then((value) => {
-          const {
-            login,
-            correction_point: correction,
-            wallet,
-            location,
-            projects_users: projects,
-            cursus_users: cursus,
-            image_url: picture,
-          } = value.data;
-          const data = {};
-          Object.assign(data, {
-            login,
-            correction,
-            wallet,
-            location,
-            projects,
-            picture,
-            cursus
-          });
-          resolve(data);
-        })
-        .catch(() => {
-          reject("User not found!");
+    // await getTokenFromStorage().then(async (token) => {
+    return axios
+      .get(USER_URL + user, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((value) => {
+        const {
+          login,
+          correction_point: correction,
+          wallet,
+          location,
+          projects_users: projects,
+          cursus_users: cursus,
+          image_url: picture,
+        } = value.data;
+        const data = {};
+        Object.assign(data, {
+          login,
+          correction,
+          wallet,
+          location,
+          projects,
+          picture,
+          cursus,
         });
-    });
+        resolve(data);
+      })
+      .catch(() => {
+        reject("User not found!");
+      });
   });
+  // });
 };

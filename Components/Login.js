@@ -28,7 +28,7 @@ export default function Login({ navigation }) {
   const [request, response, promptAsync] = useAuthRequest(
     {
       clientId: CLIENT_ID,
-      redirectUri: REDIRECT_URL,
+      redirectUri: `${REDIRECT_URL}`,
     },
     discovery
   );
@@ -38,14 +38,9 @@ export default function Login({ navigation }) {
   const onPressLogin = () => {
     setLoader(true);
     promptAsync().then(async (value) => {
-      await signIn();
-      setLoader(false)
-      // fetchToken(value.params.code)
-      //   .then((value) => {
-      //     console.log("accesToken:", value.data.access_token);
-      //   }
-      //   )
-        .catch((error) => console.log("error:", error));
+      await signIn(value.params.code).catch((error) =>
+        console.log("error:", error)
+      );
     });
   };
 

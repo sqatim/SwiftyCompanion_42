@@ -8,19 +8,23 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { getTokenFromStorage, getUser } from "../Utils/data";
+import { fetchNewToken, getTokenFromStorage, getUser } from "../Utils/data";
 import styled from "styled-components/native";
 import { useNavigate } from "react-router-native";
+import { useAuthContext } from "./AuthProviderContext";
 
 export default function Home({ navigation }) {
   const [loader, setLoader] = useState(false);
   const [search, setSearch] = useState("");
   const [found, setFound] = useState(true);
-   SecureStore.deleteItemAsync("token");
+  let { state } = useAuthContext();
+
+  // SecureStore.deleteItemAsync("token");
+
   const onPressSearch = () => {
     if (search) {
       setLoader(true);
-      getUser(search)
+      getUser(search, state.userToken)
         .then((data) => {
           navigation.navigate("User", data);
           setLoader(false);

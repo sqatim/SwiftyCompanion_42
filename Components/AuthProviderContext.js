@@ -58,6 +58,7 @@ export default function AuthProviderContext({ children }) {
 
       try {
         userToken = await SecureStore.getItemAsync("token");
+        console.log("userToken:", userToken);
       } catch (e) {
         console.log("error:", e);
         // Restoring token failed
@@ -75,25 +76,27 @@ export default function AuthProviderContext({ children }) {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async () => {
+      signIn: async (code) => {
         // In a production app, we need to send some data (usually username, password) to server and get a token
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore`
         // In the example, we'll use a dummy token
-        console.log("SignIn");
+        console.log("SignIn:", code);
+        let data;
         try {
-          const data = await axios.post(TOKEN_URL, {
+          data = await axios.post(TOKEN_URL, {
             grant_type: GRANT_TYPE,
             client_id: CLIENT_ID,
             client_secret: CLIENT_SECRET,
             code: code,
-            redirect_uri: REDIRECT_URL,
+            redirect_uri: `${REDIRECT_URL}`,
           });
         } catch (error) {
           console.log("error:", error);
         }
         console.log("dispatch:", data.data);
-        await SecureStore.setItemAsync("token", data.data.access_token);
+        const tokenInfo = JSON.stringify(data.data);
+        await SecureStore.setItemAsync("token", tokenInfo);
         dispatch({ type: "SIGN_IN", token: data.data.access_token });
       },
       signOut: async () => {
