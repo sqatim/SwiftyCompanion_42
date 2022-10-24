@@ -7,13 +7,16 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useEffect } from "react";
 import Routes from "./Components/Routes";
 import AuthProviderContext from "./Components/AuthProviderContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <AuthProviderContext>
-      <Routes />
-    </AuthProviderContext>
+    <SafeAreaView style={{ flex: 1 }}>
+      <AuthProviderContext>
+        <Routes />
+      </AuthProviderContext>
+    </SafeAreaView>
   );
 }

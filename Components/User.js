@@ -19,6 +19,7 @@ export default function User({ navigation, route }) {
   const [selected, setSelected] = React.useState(
     userData.cursus[0].cursus.name
   );
+  const [skills, setSkills] = useState({ check: false, skills: [] });
   const data = selectCursus(userData.cursus);
   const [level, setLevel] = useState(0);
   const [percentage, setPercentage] = useState(0);
@@ -35,76 +36,77 @@ export default function User({ navigation, route }) {
     else return null;
   };
   useEffect(() => {
-    console.log("selected:", selected);
     const result = userData.cursus.find(
       (element) => element.cursus.name == selected
     );
+    setSkills((prev) => ({ ...prev, skills: result.skills }));
     setLevel(result.level);
     setPercentage(result.level.toString().split(".")[1]);
     // console.log("projects:", userData.projects);
   }, [selected]);
+
+  useEffect(() => {
+    console.log("skills:", skills);
+  }, [skills]);
   return (
-    <ScrollView>
-      <ContainerStyle>
-        <WrapperStyle>
-          <PictureStyle source={{ uri: userData.picture }}></PictureStyle>
-          <DetailsContainerStyle>
-            <DetailStyle>
-              <DetailTextStyle>Login</DetailTextStyle>
-              <DetailTextStyle>{userData.login}</DetailTextStyle>
-            </DetailStyle>
-            <DetailStyle>
-              <DetailTextStyle>Wallet</DetailTextStyle>
-              <DetailTextStyle>{userData.wallet} ₳</DetailTextStyle>
-            </DetailStyle>
-            <DetailStyle>
-              <DetailTextStyle>Location</DetailTextStyle>
-              <DetailTextStyle>
-                {userData.location || "Unavailable"}
-              </DetailTextStyle>
-            </DetailStyle>
-            <DetailStyle>
-              <DetailTextStyle>Evaluation points</DetailTextStyle>
-              <DetailTextStyle>{userData.correction}</DetailTextStyle>
-            </DetailStyle>
-          </DetailsContainerStyle>
-        </WrapperStyle>
-        <CursusStyle>
-          <SelectStyle>
-            <SelectList
-              setSelected={setSelected}
-              data={data}
-              search={false}
-              defaultOption={{
-                key: userData.cursus[0].cursus.name,
-                value: userData.cursus[0].cursus.name,
-              }}
-            />
-          </SelectStyle>
-          <LevelBarStyle>
-            <PercentageBarStyle percentage={percentage}></PercentageBarStyle>
-            <LevelTextStyle>level: {level}%</LevelTextStyle>
-          </LevelBarStyle>
-        </CursusStyle>
-        <FlatList
-          data={userData.projects}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-        />
-        <TestStyle>
-          <Text>User</Text>
-        </TestStyle>
-      </ContainerStyle>
-    </ScrollView>
+    <FlatListStyle
+      ListHeaderComponent={
+        <ContainerStyle>
+          <WrapperStyle>
+            <PictureStyle source={{ uri: userData.picture }}></PictureStyle>
+            <DetailsContainerStyle>
+              <DetailStyle>
+                <DetailTextStyle>Login</DetailTextStyle>
+                <DetailTextStyle>{userData.login}</DetailTextStyle>
+              </DetailStyle>
+              <DetailStyle>
+                <DetailTextStyle>Wallet</DetailTextStyle>
+                <DetailTextStyle>{userData.wallet} ₳</DetailTextStyle>
+              </DetailStyle>
+              <DetailStyle>
+                <DetailTextStyle>Location</DetailTextStyle>
+                <DetailTextStyle>
+                  {userData.location || "Unavailable"}
+                </DetailTextStyle>
+              </DetailStyle>
+              <DetailStyle>
+                <DetailTextStyle>Evaluation points</DetailTextStyle>
+                <DetailTextStyle>{userData.correction}</DetailTextStyle>
+              </DetailStyle>
+            </DetailsContainerStyle>
+          </WrapperStyle>
+          <CursusStyle>
+            <SelectStyle>
+              <SelectList
+                setSelected={setSelected}
+                data={data}
+                search={false}
+                defaultOption={{
+                  key: userData.cursus[0].cursus.name,
+                  value: userData.cursus[0].cursus.name,
+                }}
+              />
+            </SelectStyle>
+            <LevelBarStyle>
+              <PercentageBarStyle percentage={percentage}></PercentageBarStyle>
+              <LevelTextStyle>level: {level}%</LevelTextStyle>
+            </LevelBarStyle>
+          </CursusStyle>
+        </ContainerStyle>
+      }
+      data={userData.projects}
+      keyExtractor={(item) => item.id}
+      renderItem={renderItem}
+    />
+    //   <FlatList
+    //   />
+    // </FlatList>
   );
 }
 
 const ContainerStyle = styled.View`
   width: 100%;
-  /* align-items: center; */
-  flex: 1;
-  padding: 15px;
-  background-color: white;
+  /* background-color: white; */
 `;
 
 const PictureStyle = styled.Image`
@@ -138,7 +140,7 @@ const LevelBarStyle = styled.View`
   height: 40px;
   border-radius: 8px;
   border: 0.4px solid #000;
-  margin: 15px 0;
+  margin: 15px 0 0;
   background-color: #252c2a;
   overflow: hidden;
   position: relative;
@@ -196,4 +198,9 @@ const TestStyle = styled.View`
 const SelectStyle = styled.View`
   /* width: 125px; */
   margin-top: 15px;
+`;
+
+const FlatListStyle = styled.FlatList`
+  background-color: white;
+  padding: 15px;
 `;

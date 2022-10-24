@@ -2,16 +2,16 @@
   "name": "swiftycompanion",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.1",
     "axios": "^1.1.2",
-    "expo": "^46.0.16",
+    "expo": "~46.0.16",
     "expo-auth-session": "~3.7.1",
     "expo-linking": "~3.2.2",
     "expo-random": "~12.3.0",

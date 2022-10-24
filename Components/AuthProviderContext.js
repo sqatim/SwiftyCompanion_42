@@ -60,8 +60,10 @@ export default function AuthProviderContext({ children }) {
         const { access_token } = JSON.parse(tokenInfo);
         userToken = access_token;
         console.log("userToken:",tokenInfo)
+        dispatch({ type: "RESTORE_TOKEN", token: userToken });
       } catch (e) {
         console.log("error:", e);
+        dispatch({ type: "SIGN_OUT"});
         // Restoring token failed
       }
 
@@ -69,7 +71,6 @@ export default function AuthProviderContext({ children }) {
 
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
-      dispatch({ type: "RESTORE_TOKEN", token: userToken });
     };
 
     bootstrapAsync();

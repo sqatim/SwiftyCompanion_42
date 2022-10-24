@@ -11,13 +11,6 @@ const Stack = createNativeStackNavigator();
 
 export default function Routes() {
   let { state } = useAuthContext();
-  // const prefix = Linking.createURL("/");
-  // const linking = {
-  //   prefixes: [prefix],
-  // };
-  // useEffect(() => {
-  //   console.log("prefix:", state);
-  // }, [state]);
   return (
     <NavigationContainer>
       <Stack.Navigator>

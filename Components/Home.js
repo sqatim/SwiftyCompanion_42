@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Button,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -38,24 +39,26 @@ export default function Home({ navigation }) {
     }
   };
   return (
-    <ContainerStyle>
-      <TitleStyle>Swifty Companion</TitleStyle>
-      {!loader ? (
-        <SearchContainer>
-          <InputSearchStyle
-            placeholder="Choose a login"
-            placeholderTextColor="#B3B3B3"
-            onChangeText={setSearch}
-          />
-          <ButtonStyle onPress={onPressSearch}>
-            <ButtonText>Search</ButtonText>
-          </ButtonStyle>
-          {!found && <NotFoundStyle>User not Found!</NotFoundStyle>}
-        </SearchContainer>
-      ) : (
-        <ActivityIndicator size="large"></ActivityIndicator>
-      )}
-    </ContainerStyle>
+    <ScrollView>
+      <ContainerStyle>
+        <TitleStyle>Swifty Companion</TitleStyle>
+        {!loader ? (
+          <SearchContainer>
+            <InputSearchStyle
+              placeholder="Choose a login"
+              placeholderTextColor="#B3B3B3"
+              onChangeText={setSearch}
+            />
+            <ButtonStyle onPress={onPressSearch}>
+              <ButtonText>Search</ButtonText>
+            </ButtonStyle>
+            {!found && <NotFoundStyle>User not Found!</NotFoundStyle>}
+          </SearchContainer>
+        ) : (
+          <ActivityIndicator size="large"></ActivityIndicator>
+        )}
+      </ContainerStyle>
+    </ScrollView>
   );
 }
 
