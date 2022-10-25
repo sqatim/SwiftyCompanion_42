@@ -8,6 +8,7 @@ import React, {
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } from "@env";
+import { checkExpirationToken, fetchNewToken } from "../Utils/data";
 
 const TOKEN_URL = "https://api.intra.42.fr/oauth/token";
 const USER_URL = "https://api.intra.42.fr/v2/users/";
@@ -43,12 +44,19 @@ export default function AuthProviderContext({ children }) {
             isSignout: true,
             userToken: null,
           };
+        case "CHANGE_MODE": {
+          return {
+            ...prevState,
+            light: !prevState.light,
+          };
+        }
       }
     },
     {
       isLoading: true,
       isSignout: false,
       userToken: null,
+      light: true,
     }
   );
   useEffect(() => {
@@ -56,14 +64,14 @@ export default function AuthProviderContext({ children }) {
     const bootstrapAsync = async () => {
       let userToken;
       try {
-        const tokenInfo = await SecureStore.getItemAsync("token");
+        const tokenInfo = await checkExpirationToken(dispatch);
         const { access_token } = JSON.parse(tokenInfo);
         userToken = access_token;
-        console.log("userToken:",tokenInfo)
+        console.log("userToken:", tokenInfo);
         dispatch({ type: "RESTORE_TOKEN", token: userToken });
       } catch (e) {
         console.log("error:", e);
-        dispatch({ type: "SIGN_OUT"});
+        dispatch({ type: "SIGN_OUT" });
         // Restoring token failed
       }
 
@@ -122,7 +130,11 @@ export default function AuthProviderContext({ children }) {
         await SecureStore.deleteItemAsync("token");
         dispatch({ type: "SIGN_OUT" });
       },
+      changeMode: () => {
+        dispatch({ type: "CHANGE_MODE" });
+      },
       state: state,
+      dispatch: dispatch,
     }),
     [state]
   );

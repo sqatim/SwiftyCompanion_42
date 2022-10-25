@@ -3,104 +3,140 @@ import { FlatList, Image, ScrollView, Text, View } from "react-native";
 import { useLocation } from "react-router-native";
 import styled from "styled-components/native";
 import SelectList from "react-native-dropdown-select-list";
+import Header from "./Header";
+import { useAuthContext } from "./AuthProviderContext";
+
+const typeEnum = {
+  PROJECTS: "PROJECTS",
+  SKILLS: "SKILLS",
+};
 
 const selectCursus = (cursus) => {
   const cursusTmp = [];
   cursus.map((element, key) => {
-    console.log("level", element.level);
     cursusTmp.push({ key: element.cursus.name, value: element.cursus.name });
   });
-  console.log("cursusTmp:", cursusTmp);
   return cursusTmp;
+};
+
+const selectTypes = () => [
+  { key: "PROJECTS", value: "PROJECTS" },
+  { key: "SKILLS", value: "SKILLS" },
+];
+const renderItem = ({ item }) => {
+  if (typeof item.final_mark == "number")
+    return (
+      <ProjectStyle>
+        <ProjectTitleStyle>{item.project.name}</ProjectTitleStyle>
+        <ProjectNoteStyle status={item.status} finalMark={item.final_mark}>
+          {item.final_mark}
+        </ProjectNoteStyle>
+      </ProjectStyle>
+    );
+  else return null;
+};
+const renderSkill = ({ item }) => {
+  return (
+    <ProjectStyle>
+      <ProjectTitleStyle>{item.name}</ProjectTitleStyle>
+      <ProjectNoteStyle status={item.status} finalMark={item.final_mark}>
+        {item.level}
+      </ProjectNoteStyle>
+    </ProjectStyle>
+  );
 };
 
 export default function User({ navigation, route }) {
   const userData = route.params;
+  const data = selectCursus(userData.cursus);
+  const types = selectTypes();
   const [selected, setSelected] = React.useState(
     userData.cursus[0].cursus.name
   );
-  const [skills, setSkills] = useState({ check: false, skills: [] });
-  const data = selectCursus(userData.cursus);
+  const [skills, setSkills] = useState([]);
+  const [typeSelected, setTypeSelected] = useState();
   const [level, setLevel] = useState(0);
   const [percentage, setPercentage] = useState(0);
-  const renderItem = ({ item }) => {
-    if (typeof item.final_mark == "number")
-      return (
-        <ProjectStyle>
-          <ProjectTitleStyle>{item.project.name}</ProjectTitleStyle>
-          <ProjectNoteStyle status={item.status} finalMark={item.final_mark}>
-            {item.final_mark}
-          </ProjectNoteStyle>
-        </ProjectStyle>
-      );
-    else return null;
-  };
+  let { state } = useAuthContext();
   useEffect(() => {
     const result = userData.cursus.find(
       (element) => element.cursus.name == selected
     );
-    setSkills((prev) => ({ ...prev, skills: result.skills }));
+    setSkills((prev) => result.skills);
     setLevel(result.level);
     setPercentage(result.level.toString().split(".")[1]);
-    // console.log("projects:", userData.projects);
   }, [selected]);
 
-  useEffect(() => {
-    console.log("skills:", skills);
-  }, [skills]);
   return (
     <FlatListStyle
       ListHeaderComponent={
-        <ContainerStyle>
-          <WrapperStyle>
-            <PictureStyle source={{ uri: userData.picture }}></PictureStyle>
-            <DetailsContainerStyle>
-              <DetailStyle>
-                <DetailTextStyle>Login</DetailTextStyle>
-                <DetailTextStyle>{userData.login}</DetailTextStyle>
-              </DetailStyle>
-              <DetailStyle>
-                <DetailTextStyle>Wallet</DetailTextStyle>
-                <DetailTextStyle>{userData.wallet} ₳</DetailTextStyle>
-              </DetailStyle>
-              <DetailStyle>
-                <DetailTextStyle>Location</DetailTextStyle>
-                <DetailTextStyle>
-                  {userData.location || "Unavailable"}
-                </DetailTextStyle>
-              </DetailStyle>
-              <DetailStyle>
-                <DetailTextStyle>Evaluation points</DetailTextStyle>
-                <DetailTextStyle>{userData.correction}</DetailTextStyle>
-              </DetailStyle>
-            </DetailsContainerStyle>
-          </WrapperStyle>
-          <CursusStyle>
+        <>
+          <Header navigation={navigation} />
+          <ContainerStyle>
+            <WrapperStyle>
+              <PictureStyle source={{ uri: userData.picture }}></PictureStyle>
+              <DetailsContainerStyle>
+                <DetailStyle>
+                  <DetailTextStyle>Login</DetailTextStyle>
+                  <DetailTextStyle>{userData.login}</DetailTextStyle>
+                </DetailStyle>
+                <DetailStyle>
+                  <DetailTextStyle>Wallet</DetailTextStyle>
+                  <DetailTextStyle>{userData.wallet} ₳</DetailTextStyle>
+                </DetailStyle>
+                <DetailStyle>
+                  <DetailTextStyle>Location</DetailTextStyle>
+                  <DetailTextStyle>
+                    {userData.location || "Unavailable"}
+                  </DetailTextStyle>
+                </DetailStyle>
+                <DetailStyle>
+                  <DetailTextStyle>Evaluation points</DetailTextStyle>
+                  <DetailTextStyle>{userData.correction}</DetailTextStyle>
+                </DetailStyle>
+              </DetailsContainerStyle>
+            </WrapperStyle>
+            <CursusStyle>
+              <SelectStyle>
+                <SelectList
+                  setSelected={setSelected}
+                  data={data}
+                  search={false}
+                  boxStyles={{ backgroundColor: !state.light && "#fff" }}
+                  dropdownStyles={{ backgroundColor: !state.light && "#fff" }}
+                  defaultOption={{
+                    key: userData.cursus[0].cursus.name,
+                    value: userData.cursus[0].cursus.name,
+                  }}
+                />
+              </SelectStyle>
+              <LevelBarStyle>
+                <PercentageBarStyle
+                  percentage={percentage}
+                ></PercentageBarStyle>
+                <LevelTextStyle>level: {level}%</LevelTextStyle>
+              </LevelBarStyle>
+            </CursusStyle>
             <SelectStyle>
               <SelectList
-                setSelected={setSelected}
-                data={data}
+                setSelected={setTypeSelected}
+                boxStyles={{ backgroundColor: !state.light && "#fff" }}
+                dropdownStyles={{ backgroundColor: !state.light && "#fff" }}
+                data={types}
                 search={false}
                 defaultOption={{
-                  key: userData.cursus[0].cursus.name,
-                  value: userData.cursus[0].cursus.name,
+                  key: "PROJECTS",
+                  value: "PROJECTS",
                 }}
               />
             </SelectStyle>
-            <LevelBarStyle>
-              <PercentageBarStyle percentage={percentage}></PercentageBarStyle>
-              <LevelTextStyle>level: {level}%</LevelTextStyle>
-            </LevelBarStyle>
-          </CursusStyle>
-        </ContainerStyle>
+          </ContainerStyle>
+        </>
       }
-      data={userData.projects}
+      data={typeSelected == "PROJECTS" ? userData.projects : skills}
       keyExtractor={(item) => item.id}
-      renderItem={renderItem}
+      renderItem={typeSelected == "PROJECTS" ? renderItem : renderSkill}
     />
-    //   <FlatList
-    //   />
-    // </FlatList>
   );
 }
 
@@ -133,7 +169,9 @@ const DetailStyle = styled.View`
   width: 220px;
 `;
 
-const DetailTextStyle = styled.Text``;
+const DetailTextStyle = styled.Text`
+  color: ${({ theme }) => theme.color};
+`;
 
 const LevelBarStyle = styled.View`
   width: 100%;
@@ -141,7 +179,7 @@ const LevelBarStyle = styled.View`
   border-radius: 8px;
   border: 0.4px solid #000;
   margin: 15px 0 0;
-  background-color: #252c2a;
+  background-color: ${({ theme }) => theme.levelBackground};
   overflow: hidden;
   position: relative;
 `;
@@ -153,7 +191,7 @@ const PercentageBarStyle = styled.View`
 `;
 
 const LevelTextStyle = styled.Text`
-  color: #fff;
+  color: ${({ theme }) => theme.levelColor};
   text-align: center;
   position: absolute;
   left: 40%;
@@ -201,6 +239,6 @@ const SelectStyle = styled.View`
 `;
 
 const FlatListStyle = styled.FlatList`
-  background-color: white;
-  padding: 15px;
+  background-color: ${({ theme }) => theme.background};
+  padding: 0 15px;
 `;

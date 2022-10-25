@@ -8,24 +8,23 @@ import {
   View,
 } from "react-native";
 import { useEffect, useState } from "react";
-import * as SecureStore from "expo-secure-store";
 import { fetchNewToken, getTokenFromStorage, getUser } from "../Utils/data";
 import styled from "styled-components/native";
-import { useNavigate } from "react-router-native";
 import { useAuthContext } from "./AuthProviderContext";
+import Header from "./Header";
 
 export default function Home({ navigation }) {
   const [loader, setLoader] = useState(false);
   const [search, setSearch] = useState("");
   const [found, setFound] = useState(true);
-  let { state } = useAuthContext();
+  let { state, dispatch } = useAuthContext();
 
   // SecureStore.deleteItemAsync("token");
 
   const onPressSearch = () => {
     if (search) {
       setLoader(true);
-      getUser(search, state.userToken)
+      getUser(search, dispatch)
         .then((data) => {
           navigation.navigate("User", data);
           setLoader(false);
@@ -38,8 +37,10 @@ export default function Home({ navigation }) {
         });
     }
   };
+
   return (
-    <ScrollView>
+    <ScrollViewStyle>
+      <Header navigation={navigation} />
       <ContainerStyle>
         <TitleStyle>Swifty Companion</TitleStyle>
         {!loader ? (
@@ -58,7 +59,7 @@ export default function Home({ navigation }) {
           <ActivityIndicator size="large"></ActivityIndicator>
         )}
       </ContainerStyle>
-    </ScrollView>
+    </ScrollViewStyle>
   );
 }
 
@@ -66,19 +67,22 @@ const TitleStyle = styled.Text`
   font-size: 35px;
   margin-bottom: 50px;
   font-weight: 700;
+  color: ${({ theme }) => theme.color};
 `;
 
 const ContainerStyle = styled.View`
   width: 100%;
   align-items: center;
   flex: 1;
-  margin-top: 200px;
+  margin-top: 100px;
 `;
 
 const ButtonStyle = styled.TouchableOpacity`
   border-radius: 10px;
   padding: 10px 20px;
   border: 0.5px solid #000;
+  border-color: ${({ theme }) => theme.borderColor};
+  background-color: ${({ theme }) => theme.buttonBackground};
   /* background-color: #841584; */
 `;
 
@@ -87,6 +91,7 @@ const ButtonText = styled.Text`
   color: #000;
   font-weight: bold;
   align-self: center;
+  color: ${({ theme }) => theme.buttonColor};
 `;
 
 const InputSearchStyle = styled.TextInput`
@@ -95,6 +100,8 @@ const InputSearchStyle = styled.TextInput`
   width: 75%;
   margin-bottom: 20px;
   border-radius: 8px;
+  color: ${({ theme }) => theme.inputColor};
+  background-color: ${({ theme }) => theme.inputBackground};
 `;
 
 const SearchContainer = styled.View`
@@ -105,4 +112,9 @@ const SearchContainer = styled.View`
 const NotFoundStyle = styled.Text`
   color: #f00;
   margin-top: 5px;
+`;
+
+const ScrollViewStyle = styled.ScrollView`
+  padding: 0 15px;
+  background-color: ${({ theme }) => theme.background};
 `;

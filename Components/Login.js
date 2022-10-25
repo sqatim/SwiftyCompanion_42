@@ -14,6 +14,7 @@ import { fetchToken } from "../Utils/data";
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } from "@env";
 import styled from "styled-components/native";
 import { useAuthContext } from "./AuthProviderContext";
+import Header from "./Header";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -46,6 +47,7 @@ export default function Login({ navigation }) {
 
   return (
     <ContainerStyle>
+      <Header navigation={navigation} />
       <TitleStyle>Swifty Companion</TitleStyle>
       {!loader ? (
         <ButtonStyle onPress={onPressLogin}>
@@ -62,12 +64,16 @@ const TitleStyle = styled.Text`
   font-size: 35px;
   margin-bottom: 50px;
   font-weight: 700;
+  margin-top: 100px;
+  color: ${({ theme }) => theme.color};
 `;
 
 const ButtonStyle = styled.TouchableOpacity`
   border-radius: 10px;
   padding: 10px 20px;
   background-color: #841584;
+  border: 0.5px solid ${({ theme }) => theme.borderColor};
+  background-color: ${({ theme }) => theme.buttonBackground};
 `;
 
 const ButtonText = styled.Text`
@@ -76,9 +82,12 @@ const ButtonText = styled.Text`
   font-weight: bold;
   align-self: center;
   text-transform: uppercase;
+  color: ${({ theme }) => theme.buttonColor};
 `;
 const ContainerStyle = styled.View`
   align-items: center;
   flex: 1;
-  margin-top: 200px;
+  width: 100%;
+  background-color: ${({ theme }) => theme.background};
+  /* margin-top: 200px; */
 `;

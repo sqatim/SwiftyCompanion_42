@@ -19,49 +19,59 @@ export const fetchToken = async (code) => {
   return data;
 };
 
-export const fetchNewToken = async () => {
-  console.log("server");
-  const data = await axios
-    .post(TOKEN_URL, {
-      grant_type: "client_credentials",
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-      redirect_uri: `${REDIRECT_URL}`,
-    })
-    .then(() => {
-      console.log("jat ");
-    });
-  console.log("new fetch:", data);
-  // await SecureStore.setItemAsync("token", data.data.access_token);
-  // return data;
+export const fetchNewToken = async (refreshToken) => {
+  return new Promise(async (resolve, reject) => {
+    return await axios
+      .post(TOKEN_URL, {
+        grant_type: "refresh_token",
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        refresh_token: refreshToken,
+        // redirect_uri: `${REDIRECT_URL}`,
+      })
+      .then((value) => {
+        console.log("jat:", value.data);
+        resolve(value.data);
+      });
+  });
 };
 
 export const getTokenFromStorage = async () => {
   return await SecureStore.getItemAsync("token");
 };
 
-const checkExpirationToken = async () => {
+export const checkExpirationToken = async (dispatch) => {
   const tokenInfo = await getTokenFromStorage("token");
   const date = new Date().getTime() / 1000;
-  console.log("token:", tokenInfo);
+  if(!tokenInfo)
+    throw "No token found"
+  // console.log("test:", tokenInfo)
   const { expires_in: expire, created_at: createdAt } = JSON.parse(tokenInfo);
   console.log("-------------------------------------");
   console.log("expire:", expire);
   console.log("created at:", createdAt);
   console.log("Date:", date);
   console.log("-------------------------------------");
-  if (createdAt + expire > date) return 1;
-  else return 0;
+  if (createdAt + expire > date) return tokenInfo;
+  else {
+    const { refresh_token, access_token} = JSON.parse(tokenInfo);
+    const newTokenInfo = await fetchNewToken(refresh_token);
+    const newTokenInfoString = JSON.stringify(newTokenInfo);
+    await SecureStore.setItemAsync("token", newTokenInfoString);
+    dispatch({ type: "RESTORE_TOKEN", token: access_token });
+    console.log("new Token Info:", newTokenInfo);
+    return newTokenInfo;
+  }
 };
 
-export const getUser = async (user, token) => {
-  // console.log("result:", await checkExpirationToken());
-  console.log("token:", token);
-  console.log("test:", token);
+export const getUser = async (user, dispatch) => {
+  const tokenInfo = await checkExpirationToken(dispatch);
+  const { access_token } = JSON.parse(tokenInfo);
+
   return new Promise(async (resolve, reject) => {
-    return axios
+    return await axios
       .get(USER_URL + user, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${access_token}` },
       })
       .then((value) => {
         const {
