@@ -52,13 +52,13 @@ export const checkExpirationToken = async (dispatch) => {
   console.log("created at:", createdAt);
   console.log("Date:", date);
   console.log("-------------------------------------");
-  if (createdAt + expire > date) return tokenInfo;
+  if (createdAt + expire > date) return JSON.parse(tokenInfo);
   else {
-    const { refresh_token, access_token} = JSON.parse(tokenInfo);
+    const { refresh_token} = JSON.parse(tokenInfo);
     const newTokenInfo = await fetchNewToken(refresh_token);
     const newTokenInfoString = JSON.stringify(newTokenInfo);
     await SecureStore.setItemAsync("token", newTokenInfoString);
-    dispatch({ type: "RESTORE_TOKEN", token: access_token });
+    dispatch({ type: "RESTORE_TOKEN", token: newTokenInfo.access_token });
     console.log("new Token Info:", newTokenInfo);
     return newTokenInfo;
   }
@@ -66,8 +66,7 @@ export const checkExpirationToken = async (dispatch) => {
 
 export const getUser = async (user, dispatch) => {
   const tokenInfo = await checkExpirationToken(dispatch);
-  const { access_token } = JSON.parse(tokenInfo);
-
+  const { access_token } = tokenInfo;
   return new Promise(async (resolve, reject) => {
     return await axios
       .get(USER_URL + user, {

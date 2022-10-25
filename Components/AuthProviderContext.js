@@ -64,11 +64,11 @@ export default function AuthProviderContext({ children }) {
     const bootstrapAsync = async () => {
       let userToken;
       try {
-        const tokenInfo = await checkExpirationToken(dispatch);
-        const { access_token } = JSON.parse(tokenInfo);
-        userToken = access_token;
-        console.log("userToken:", tokenInfo);
-        dispatch({ type: "RESTORE_TOKEN", token: userToken });
+        await checkExpirationToken(dispatch);
+        // const { access_token } = tokenInfo;
+        // userToken = access_token;
+        // console.log("userToken:", tokenInfo);
+        // dispatch({ type: "RESTORE_TOKEN", token: userToken });
       } catch (e) {
         console.log("error:", e);
         dispatch({ type: "SIGN_OUT" });
