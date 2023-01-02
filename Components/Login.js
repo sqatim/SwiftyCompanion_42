@@ -34,11 +34,11 @@ export default function Login({ navigation }) {
     discovery
   );
   const [loader, setLoader] = useState(false);
-  // const navigate = useNavigate();
 
   const onPressLogin = () => {
     setLoader(true);
     promptAsync().then(async (value) => {
+      console.log("promptAsync:", value)
       await signIn(value.params.code).catch((error) =>
         console.log("error:", error)
       );
@@ -64,7 +64,7 @@ const TitleStyle = styled.Text`
   font-size: 35px;
   margin-bottom: 50px;
   font-weight: 700;
-  margin-top: 100px;
+  margin-top: 50px;
   color: ${({ theme }) => theme.color};
 `;
 

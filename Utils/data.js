@@ -43,8 +43,8 @@ export const getTokenFromStorage = async () => {
 export const checkExpirationToken = async (dispatch) => {
   const tokenInfo = await getTokenFromStorage("token");
   const date = new Date().getTime() / 1000;
-  if(!tokenInfo)
-    throw "No token found"
+  console.log("tokenInfo:", tokenInfo);
+  if (!tokenInfo) throw "No token found";
   // console.log("test:", tokenInfo)
   const { expires_in: expire, created_at: createdAt } = JSON.parse(tokenInfo);
   console.log("-------------------------------------");
@@ -52,21 +52,24 @@ export const checkExpirationToken = async (dispatch) => {
   console.log("created at:", createdAt);
   console.log("Date:", date);
   console.log("-------------------------------------");
-  if (createdAt + expire > date) return JSON.parse(tokenInfo);
-  else {
-    const { refresh_token} = JSON.parse(tokenInfo);
+  if (createdAt + expire > date) {
+    console.log("not yet expired");
+    return { refreshed: false, tokenInfo: JSON.parse(tokenInfo) };
+  } else {
+    const { refresh_token } = JSON.parse(tokenInfo);
     const newTokenInfo = await fetchNewToken(refresh_token);
     const newTokenInfoString = JSON.stringify(newTokenInfo);
     await SecureStore.setItemAsync("token", newTokenInfoString);
     dispatch({ type: "RESTORE_TOKEN", token: newTokenInfo.access_token });
     console.log("new Token Info:", newTokenInfo);
-    return newTokenInfo;
+    return { refreshed: true, tokenInfo: newTokenInfo };
   }
 };
 
 export const getUser = async (user, dispatch) => {
-  const tokenInfo = await checkExpirationToken(dispatch);
+  const { tokenInfo } = await checkExpirationToken(dispatch);
   const { access_token } = tokenInfo;
+  console.log("SignIn:", access_token);
   return new Promise(async (resolve, reject) => {
     return await axios
       .get(USER_URL + user, {
@@ -80,7 +83,7 @@ export const getUser = async (user, dispatch) => {
           location,
           projects_users: projects,
           cursus_users: cursus,
-          image_url: picture,
+          image: { link: picture },
         } = value.data;
         const data = {};
         Object.assign(data, {

@@ -9,6 +9,7 @@ import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } from "@env";
 import { checkExpirationToken, fetchNewToken } from "../Utils/data";
+import { makeRedirectUri } from "expo-auth-session";
 
 const TOKEN_URL = "https://api.intra.42.fr/oauth/token";
 const USER_URL = "https://api.intra.42.fr/v2/users/";
@@ -60,11 +61,17 @@ export default function AuthProviderContext({ children }) {
     }
   );
   useEffect(() => {
+    // console.log("wa maymkansh a sat");
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
       try {
-        await checkExpirationToken(dispatch);
+        // console.log("enter:", state.userToken);
+        const { tokenInfo } = await checkExpirationToken(dispatch);
+        if (!tokenInfo.refreshed) {
+          console.log("----------dispatched");
+          dispatch({ type: "SIGN_IN", token: tokenInfo.access_token });
+        }
         // const { access_token } = tokenInfo;
         // userToken = access_token;
         // console.log("userToken:", tokenInfo);
@@ -91,7 +98,10 @@ export default function AuthProviderContext({ children }) {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `SecureStore`
         // In the example, we'll use a dummy token
-        console.log("SignIn:", code);
+        // console.log("SignIn:", code);
+        // console.log("GRANT_TYPE:", GRANT_TYPE);
+        // console.log("CLIENT_ID:", CLIENT_ID);
+        console.log("REDIRECT_URL:", REDIRECT_URL);
         let data;
         try {
           data = await axios.post(TOKEN_URL, {
@@ -99,7 +109,7 @@ export default function AuthProviderContext({ children }) {
             client_id: CLIENT_ID,
             client_secret: CLIENT_SECRET,
             code: code,
-            redirect_uri: `${REDIRECT_URL}`,
+            redirect_uri: REDIRECT_URL,
           });
         } catch (error) {
           console.log("error:", error);
@@ -127,6 +137,7 @@ export default function AuthProviderContext({ children }) {
         dispatch({ type: "SIGN_IN", token: data.data.access_token });
       },
       signOut: async () => {
+        console.log("signOut tototrina");
         await SecureStore.deleteItemAsync("token");
         dispatch({ type: "SIGN_OUT" });
       },

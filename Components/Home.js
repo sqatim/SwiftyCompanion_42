@@ -26,6 +26,7 @@ export default function Home({ navigation }) {
       setLoader(true);
       getUser(search, dispatch)
         .then((data) => {
+          setFound(true);
           navigation.navigate("User", data);
           setLoader(false);
           // navigate("/user", { replace: true, state: data });
@@ -74,7 +75,7 @@ const ContainerStyle = styled.View`
   width: 100%;
   align-items: center;
   flex: 1;
-  margin-top: 100px;
+  margin-top: 40px;
 `;
 
 const ButtonStyle = styled.TouchableOpacity`

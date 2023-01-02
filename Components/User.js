@@ -50,21 +50,29 @@ export default function User({ navigation, route }) {
   const userData = route.params;
   const data = selectCursus(userData.cursus);
   const types = selectTypes();
+  // console.log("cursus:",userData.cursus[0]);
   const [selected, setSelected] = React.useState(
-    userData.cursus[0].cursus.name
+    userData.cursus[0]?.cursus?.name
   );
   const [skills, setSkills] = useState([]);
   const [typeSelected, setTypeSelected] = useState();
   const [level, setLevel] = useState(0);
-  const [percentage, setPercentage] = useState(0);
+  const [percentage, setPercentage] = useState("0");
   let { state } = useAuthContext();
+  let percentageSplited = null;
   useEffect(() => {
+    // console.log(userData);
     const result = userData.cursus.find(
       (element) => element.cursus.name == selected
     );
-    setSkills((prev) => result.skills);
-    setLevel(result.level);
-    setPercentage(result.level.toString().split(".")[1]);
+    setSkills((prev) => result?.skills);
+    setLevel(result?.level);
+    percentageSplited = result?.level.toString().split(".");
+    if (percentageSplited && percentageSplited[1])
+      setPercentage(result.level.toString().split(".")[1]);
+    else {
+      setPercentage(null);
+    }
   }, [selected]);
 
   return (
@@ -97,25 +105,29 @@ export default function User({ navigation, route }) {
               </DetailsContainerStyle>
             </WrapperStyle>
             <CursusStyle>
-              <SelectStyle>
-                <SelectList
-                  setSelected={setSelected}
-                  data={data}
-                  search={false}
-                  boxStyles={{ backgroundColor: !state.light && "#fff" }}
-                  dropdownStyles={{ backgroundColor: !state.light && "#fff" }}
-                  defaultOption={{
-                    key: userData.cursus[0].cursus.name,
-                    value: userData.cursus[0].cursus.name,
-                  }}
-                />
-              </SelectStyle>
-              <LevelBarStyle>
-                <PercentageBarStyle
-                  percentage={percentage}
-                ></PercentageBarStyle>
-                <LevelTextStyle>level: {level}%</LevelTextStyle>
-              </LevelBarStyle>
+              {userData.cursus[0] && (
+                <SelectStyle>
+                  <SelectList
+                    setSelected={setSelected}
+                    data={data}
+                    search={false}
+                    boxStyles={{ backgroundColor: !state.light && "#fff" }}
+                    dropdownStyles={{ backgroundColor: !state.light && "#fff" }}
+                    defaultOption={{
+                      key: userData.cursus[0].cursus.name,
+                      value: userData.cursus[0].cursus.name,
+                    }}
+                  />
+                </SelectStyle>
+              )}
+              {percentage && (
+                <LevelBarStyle>
+                  <PercentageBarStyle
+                    percentage={percentage}
+                  ></PercentageBarStyle>
+                  <LevelTextStyle>level: {level}%</LevelTextStyle>
+                </LevelBarStyle>
+              )}
             </CursusStyle>
             <SelectStyle>
               <SelectList

@@ -4,7 +4,7 @@
     "slug": "swifty-companion",
     "version": "1.0.0",
     "scheme": "com.swifty.app",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
