@@ -29,7 +29,6 @@ export const fetchNewToken = async (refreshToken) => {
         refresh_token: refreshToken,
       })
       .then((value) => {
-        // console.log("jat:", value.data);
         resolve(value.data);
       });
   });
@@ -42,17 +41,9 @@ export const getTokenFromStorage = async () => {
 export const checkExpirationToken = async (dispatch) => {
   const tokenInfo = await getTokenFromStorage("token");
   const date = new Date().getTime() / 1000;
-  // console.log("tokenInfo:", tokenInfo);
   if (!tokenInfo) throw "No token found";
-  // console.log("test:", tokenInfo)
   const { expires_in: expire, created_at: createdAt } = JSON.parse(tokenInfo);
-  // console.log("-------------------------------------");
-  // console.log("expire:", expire);
-  // console.log("created at:", createdAt);
-  // console.log("Date:", date);
-  // console.log("-------------------------------------");
   if (createdAt + expire > date) {
-    // console.log("not yet expired");
     return { refreshed: false, tokenInfo: JSON.parse(tokenInfo) };
   } else {
     const { refresh_token } = JSON.parse(tokenInfo);
@@ -60,7 +51,6 @@ export const checkExpirationToken = async (dispatch) => {
     const newTokenInfoString = JSON.stringify(newTokenInfo);
     await SecureStore.setItemAsync("token", newTokenInfoString);
     dispatch({ type: "RESTORE_TOKEN", token: newTokenInfo.access_token });
-    console.log("new Token Info:", newTokenInfo);
     return { refreshed: true, tokenInfo: newTokenInfo };
   }
 };
@@ -68,7 +58,6 @@ export const checkExpirationToken = async (dispatch) => {
 export const getUser = async (user, dispatch) => {
   const { tokenInfo } = await checkExpirationToken(dispatch);
   const { access_token } = tokenInfo;
-  // console.log("SignIn:", access_token);
   return new Promise(async (resolve, reject) => {
     return await axios
       .get(USER_URL + user, {

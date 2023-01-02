@@ -12,7 +12,6 @@ import { checkExpirationToken, fetchNewToken } from "../Utils/data";
 import { makeRedirectUri } from "expo-auth-session";
 
 const TOKEN_URL = "https://api.intra.42.fr/oauth/token";
-const USER_URL = "https://api.intra.42.fr/v2/users/";
 
 const GRANT_TYPE = "authorization_code";
 
@@ -69,19 +68,11 @@ export default function AuthProviderContext({ children }) {
         if (!tokenInfo.refreshed) {
           dispatch({ type: "SIGN_IN", token: tokenInfo.access_token });
         }
-        // const { access_token } = tokenInfo;
-        // userToken = access_token;
-        // console.log("userToken:", tokenInfo);
-        // dispatch({ type: "RESTORE_TOKEN", token: userToken });
       } catch (e) {
         dispatch({ type: "SIGN_OUT" });
         // Restoring token failed
       }
 
-      // After restoring token, we may need to validate it in production apps
-
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
     };
 
     bootstrapAsync();
@@ -90,14 +81,6 @@ export default function AuthProviderContext({ children }) {
   const authContext = React.useMemo(
     () => ({
       signIn: async (code) => {
-        // In a production app, we need to send some data (usually username, password) to server and get a token
-        // We will also need to handle errors if sign in failed
-        // After getting token, we need to persist the token using `SecureStore`
-        // In the example, we'll use a dummy token
-        // console.log("SignIn:", code);
-        // console.log("GRANT_TYPE:", GRANT_TYPE);
-        // console.log("CLIENT_ID:", CLIENT_ID);
-        // console.log("REDIRECT_URL:", REDIRECT_URL);
         let data;
         try {
           data = await axios.post(TOKEN_URL, {
@@ -108,9 +91,8 @@ export default function AuthProviderContext({ children }) {
             redirect_uri: REDIRECT_URL,
           });
         } catch (error) {
-          // console.log("error:", error);
+          console.log("error:", error);
         }
-        // console.log("dispatch:", data.data);
         const tokenInfo = JSON.stringify(data.data);
         await SecureStore.setItemAsync("token", tokenInfo);
         dispatch({ type: "SIGN_IN", token: data.data.access_token });
@@ -127,7 +109,6 @@ export default function AuthProviderContext({ children }) {
         } catch (error) {
           console.log("error:", error);
         }
-        // console.log("dispatch:", data.data);
         const tokenInfo = JSON.stringify(data.data);
         await SecureStore.setItemAsync("token", tokenInfo);
         dispatch({ type: "SIGN_IN", token: data.data.access_token });

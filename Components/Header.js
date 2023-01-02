@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { StatusBar, TouchableOpacity } from "react-native";
+import React from "react";
+import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
-import * as SecureStore from "expo-secure-store";
 import { useRoute } from "@react-navigation/native";
 import { useAuthContext } from "./AuthProviderContext";
-const STYLES = ["default", "dark-content", "light-content"];
-const TRANSITIONS = ["fade", "slide", "none"];
+
 
 export default function Header({ navigation }) {
   const route = useRoute();
-  const [hidden, setHidden] = useState(false);
-  const [statusBarStyle, setStatusBarStyle] = useState(STYLES[1]);
-  const [statusBarTransition, setStatusBarTransition] = useState(
-    TRANSITIONS[0]
-  );
   let { signOut, changeMode, state } = useAuthContext();
 
   const logOutPress = () => {
@@ -71,19 +64,14 @@ export default function Header({ navigation }) {
 const TopSideStyle = styled.View`
   width: 100%;
   padding: 10px 0;
-  /* flex: 1; */
 `;
 const NavBarStyle = styled.View`
-  /* flex: 1; */
   flex-direction: row;
   justify-content: space-around;
   padding: 15px 0px;
-  /* background-color: red; */
 `;
 
 const ImageStyle = styled.Image`
   width: 35px;
   height: 35px;
-  /* margin-top: 100px; */
-  /* background-color: white; */
 `;

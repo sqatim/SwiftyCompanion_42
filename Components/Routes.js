@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./Login";
 import Home from "./Home";
 import User from "./User";
 import { useAuthContext } from "./AuthProviderContext";
-import { Button, Text } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { ThemeProvider } from "styled-components/native";
 import styled from "styled-components/native";
 import { theme } from "../Utils/theme";

@@ -1,17 +1,8 @@
-import {
-  ActivityIndicator,
-  Button,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { useAuthRequest, makeRedirectUri } from "expo-auth-session";
-import { useEffect, useState } from "react";
+import {ActivityIndicator} from "react-native";
+import { useAuthRequest} from "expo-auth-session";
+import { useState } from "react";
 import * as WebBrowser from "expo-web-browser";
-import { useNavigate } from "react-router-native";
-import { fetchToken } from "../Utils/data";
-import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URL } from "@env";
+import { CLIENT_ID, REDIRECT_URL } from "@env";
 import styled from "styled-components/native";
 import { useAuthContext } from "./AuthProviderContext";
 import Header from "./Header";
@@ -24,7 +15,7 @@ const discovery = {
 };
 
 export default function Login({ navigation }) {
-  let { state, signIn } = useAuthContext();
+  let {signIn } = useAuthContext();
 
   const [request, response, promptAsync] = useAuthRequest(
     {

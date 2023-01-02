@@ -1,18 +1,12 @@
 import {
   ActivityIndicator,
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
 } from "react-native";
-import { useEffect, useState } from "react";
-import { fetchNewToken, getTokenFromStorage, getUser } from "../Utils/data";
+import { useState } from "react";
+import { getUser } from "../Utils/data";
 import styled from "styled-components/native";
 import { useAuthContext } from "./AuthProviderContext";
 import Header from "./Header";
-import * as SecureStore from "expo-secure-store";
+
 export default function Home({ navigation }) {
   const [loader, setLoader] = useState(false);
   const [search, setSearch] = useState("");

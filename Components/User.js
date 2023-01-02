@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, ScrollView, Text, View } from "react-native";
-import { useLocation } from "react-router-native";
 import styled from "styled-components/native";
 import SelectList from "react-native-dropdown-select-list";
 import Header from "./Header";
 import { useAuthContext } from "./AuthProviderContext";
-
-const typeEnum = {
-  PROJECTS: "PROJECTS",
-  SKILLS: "SKILLS",
-};
 
 const selectCursus = (cursus) => {
   const cursusTmp = [];
@@ -51,7 +44,6 @@ export default function User({ navigation, route }) {
   const userData = route.params;
   const data = selectCursus(userData.cursus);
   const types = selectTypes();
-  // console.log("cursus:",userData.cursus[0]);
   const [selected, setSelected] = React.useState(JSON.stringify({
     name:userData.cursus[0]?.cursus?.name,
     id: userData.cursus[0]?.cursus?.id
