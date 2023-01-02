@@ -11,7 +11,6 @@ import { ThemeProvider } from "styled-components/native";
 import styled from "styled-components/native";
 import { theme } from "../Utils/theme";
 
-// import * as Linking from "expo-linking";
 const Stack = createNativeStackNavigator();
 
 export default function Routes() {

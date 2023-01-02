@@ -27,10 +27,9 @@ export const fetchNewToken = async (refreshToken) => {
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
         refresh_token: refreshToken,
-        // redirect_uri: `${REDIRECT_URL}`,
       })
       .then((value) => {
-        console.log("jat:", value.data);
+        // console.log("jat:", value.data);
         resolve(value.data);
       });
   });
@@ -43,17 +42,17 @@ export const getTokenFromStorage = async () => {
 export const checkExpirationToken = async (dispatch) => {
   const tokenInfo = await getTokenFromStorage("token");
   const date = new Date().getTime() / 1000;
-  console.log("tokenInfo:", tokenInfo);
+  // console.log("tokenInfo:", tokenInfo);
   if (!tokenInfo) throw "No token found";
   // console.log("test:", tokenInfo)
   const { expires_in: expire, created_at: createdAt } = JSON.parse(tokenInfo);
-  console.log("-------------------------------------");
-  console.log("expire:", expire);
-  console.log("created at:", createdAt);
-  console.log("Date:", date);
-  console.log("-------------------------------------");
+  // console.log("-------------------------------------");
+  // console.log("expire:", expire);
+  // console.log("created at:", createdAt);
+  // console.log("Date:", date);
+  // console.log("-------------------------------------");
   if (createdAt + expire > date) {
-    console.log("not yet expired");
+    // console.log("not yet expired");
     return { refreshed: false, tokenInfo: JSON.parse(tokenInfo) };
   } else {
     const { refresh_token } = JSON.parse(tokenInfo);
@@ -69,7 +68,7 @@ export const checkExpirationToken = async (dispatch) => {
 export const getUser = async (user, dispatch) => {
   const { tokenInfo } = await checkExpirationToken(dispatch);
   const { access_token } = tokenInfo;
-  console.log("SignIn:", access_token);
+  // console.log("SignIn:", access_token);
   return new Promise(async (resolve, reject) => {
     return await axios
       .get(USER_URL + user, {
@@ -98,7 +97,7 @@ export const getUser = async (user, dispatch) => {
         resolve(data);
       })
       .catch((error) => {
-        console.log("error:error:", error);
+        // console.log("error:error:", error);
         reject("User not found!:");
       });
   });

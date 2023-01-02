@@ -14,7 +14,7 @@ const typeEnum = {
 const selectCursus = (cursus) => {
   const cursusTmp = [];
   cursus.map((element, key) => {
-    cursusTmp.push({ key: element.cursus.name, value: element.cursus.name });
+    cursusTmp.push({ key: JSON.stringify({id: element.cursus.id,name:element.cursus.name}), value: element.cursus.name });
   });
   return cursusTmp;
 };
@@ -24,7 +24,7 @@ const selectTypes = () => [
   { key: "SKILLS", value: "SKILLS" },
 ];
 const renderItem = ({ item }) => {
-  if (typeof item.final_mark == "number")
+  if (item.status == "finished" && typeof item.final_mark == "number")
     return (
       <ProjectStyle>
         <ProjectTitleStyle>{item.project.name}</ProjectTitleStyle>
@@ -35,6 +35,7 @@ const renderItem = ({ item }) => {
     );
   else return null;
 };
+
 const renderSkill = ({ item }) => {
   return (
     <ProjectStyle>
@@ -51,20 +52,25 @@ export default function User({ navigation, route }) {
   const data = selectCursus(userData.cursus);
   const types = selectTypes();
   // console.log("cursus:",userData.cursus[0]);
-  const [selected, setSelected] = React.useState(
-    userData.cursus[0]?.cursus?.name
+  const [selected, setSelected] = React.useState(JSON.stringify({
+    name:userData.cursus[0]?.cursus?.name,
+    id: userData.cursus[0]?.cursus?.id
+  })
   );
   const [skills, setSkills] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [typeSelected, setTypeSelected] = useState();
   const [level, setLevel] = useState(0);
   const [percentage, setPercentage] = useState("0");
   let { state } = useAuthContext();
   let percentageSplited = null;
+  let selectedParsed;
   useEffect(() => {
-    // console.log(userData);
+    selectedParsed = JSON.parse(selected);
     const result = userData.cursus.find(
-      (element) => element.cursus.name == selected
+      (element) => element.cursus.name == selectedParsed.name
     );
+    setProjects(userData.projects.filter((element) => element.cursus_ids[0] == selectedParsed.id))
     setSkills((prev) => result?.skills);
     setLevel(result?.level);
     percentageSplited = result?.level.toString().split(".");
@@ -114,7 +120,10 @@ export default function User({ navigation, route }) {
                     boxStyles={{ backgroundColor: !state.light && "#fff" }}
                     dropdownStyles={{ backgroundColor: !state.light && "#fff" }}
                     defaultOption={{
-                      key: userData.cursus[0].cursus.name,
+                      key: JSON.stringify({
+                        name:userData.cursus[0]?.cursus?.name,
+                        id: userData.cursus[0]?.cursus?.id
+                      }),
                       value: userData.cursus[0].cursus.name,
                     }}
                   />
@@ -145,7 +154,7 @@ export default function User({ navigation, route }) {
           </ContainerStyle>
         </>
       }
-      data={typeSelected == "PROJECTS" ? userData.projects : skills}
+      data={typeSelected == "PROJECTS" ? projects : skills}
       keyExtractor={(item) => item.id}
       renderItem={typeSelected == "PROJECTS" ? renderItem : renderSkill}
     />
@@ -154,13 +163,11 @@ export default function User({ navigation, route }) {
 
 const ContainerStyle = styled.View`
   width: 100%;
-  /* background-color: white; */
 `;
 
 const PictureStyle = styled.Image`
   width: 125px;
   height: 100%;
-  /* margin-right: 10px; */
   border-radius: 50px;
 `;
 const WrapperStyle = styled.View`
@@ -209,7 +216,6 @@ const LevelTextStyle = styled.Text`
   left: 40%;
   top: 25%;
   height: 100%;
-  /* transform: translateY(50%); */
 `;
 
 const ProjectStyle = styled.View`
@@ -227,7 +233,6 @@ const ProjectTitleStyle = styled.Text`
 `;
 const ProjectNoteStyle = styled.Text`
   color: ${({ status, finalMark }) => {
-    // console.log("finalMark:", finalMark);
     if (status == "in_progress") return "yellow";
     else if ((status = "finished" && finalMark == 0)) return "red";
     else return "green";
@@ -238,15 +243,9 @@ const ProjectNoteStyle = styled.Text`
 `;
 
 const CursusStyle = styled.View`
-  /* flex-direction: row; */
-`;
-
-const TestStyle = styled.View`
-  height: 50px;
 `;
 
 const SelectStyle = styled.View`
-  /* width: 125px; */
   margin-top: 15px;
 `;
 

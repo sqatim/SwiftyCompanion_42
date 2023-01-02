@@ -61,15 +61,12 @@ export default function AuthProviderContext({ children }) {
     }
   );
   useEffect(() => {
-    // console.log("wa maymkansh a sat");
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
       try {
-        // console.log("enter:", state.userToken);
         const { tokenInfo } = await checkExpirationToken(dispatch);
         if (!tokenInfo.refreshed) {
-          console.log("----------dispatched");
           dispatch({ type: "SIGN_IN", token: tokenInfo.access_token });
         }
         // const { access_token } = tokenInfo;
@@ -77,7 +74,6 @@ export default function AuthProviderContext({ children }) {
         // console.log("userToken:", tokenInfo);
         // dispatch({ type: "RESTORE_TOKEN", token: userToken });
       } catch (e) {
-        console.log("error:", e);
         dispatch({ type: "SIGN_OUT" });
         // Restoring token failed
       }
@@ -101,7 +97,7 @@ export default function AuthProviderContext({ children }) {
         // console.log("SignIn:", code);
         // console.log("GRANT_TYPE:", GRANT_TYPE);
         // console.log("CLIENT_ID:", CLIENT_ID);
-        console.log("REDIRECT_URL:", REDIRECT_URL);
+        // console.log("REDIRECT_URL:", REDIRECT_URL);
         let data;
         try {
           data = await axios.post(TOKEN_URL, {
@@ -112,9 +108,9 @@ export default function AuthProviderContext({ children }) {
             redirect_uri: REDIRECT_URL,
           });
         } catch (error) {
-          console.log("error:", error);
+          // console.log("error:", error);
         }
-        console.log("dispatch:", data.data);
+        // console.log("dispatch:", data.data);
         const tokenInfo = JSON.stringify(data.data);
         await SecureStore.setItemAsync("token", tokenInfo);
         dispatch({ type: "SIGN_IN", token: data.data.access_token });
@@ -131,13 +127,12 @@ export default function AuthProviderContext({ children }) {
         } catch (error) {
           console.log("error:", error);
         }
-        console.log("dispatch:", data.data);
+        // console.log("dispatch:", data.data);
         const tokenInfo = JSON.stringify(data.data);
         await SecureStore.setItemAsync("token", tokenInfo);
         dispatch({ type: "SIGN_IN", token: data.data.access_token });
       },
       signOut: async () => {
-        console.log("signOut tototrina");
         await SecureStore.deleteItemAsync("token");
         dispatch({ type: "SIGN_OUT" });
       },

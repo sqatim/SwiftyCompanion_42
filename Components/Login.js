@@ -38,7 +38,6 @@ export default function Login({ navigation }) {
   const onPressLogin = () => {
     setLoader(true);
     promptAsync().then(async (value) => {
-      console.log("promptAsync:", value)
       await signIn(value.params.code).catch((error) =>
         console.log("error:", error)
       );
@@ -89,5 +88,4 @@ const ContainerStyle = styled.View`
   flex: 1;
   width: 100%;
   background-color: ${({ theme }) => theme.background};
-  /* margin-top: 200px; */
 `;

@@ -2,7 +2,7 @@
   "name": "swiftycompanion",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
+    "start": "expo run:android",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"

@@ -19,7 +19,6 @@ export default function Home({ navigation }) {
   const [found, setFound] = useState(true);
   let { state, dispatch } = useAuthContext();
 
-  // SecureStore.deleteItemAsync("token");
 
   const onPressSearch = () => {
     if (search) {
@@ -29,7 +28,6 @@ export default function Home({ navigation }) {
           setFound(true);
           navigation.navigate("User", data);
           setLoader(false);
-          // navigate("/user", { replace: true, state: data });
         })
         .catch((error) => {
           console.log("error:", error);
