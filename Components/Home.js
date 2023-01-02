@@ -23,7 +23,7 @@ export default function Home({ navigation }) {
   const onPressSearch = () => {
     if (search) {
       setLoader(true);
-      getUser(search, dispatch)
+      getUser(search.trim(), dispatch)
         .then((data) => {
           setFound(true);
           navigation.navigate("User", data);

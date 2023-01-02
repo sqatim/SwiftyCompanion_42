@@ -24,7 +24,7 @@ const selectTypes = () => [
   { key: "SKILLS", value: "SKILLS" },
 ];
 const renderItem = ({ item }) => {
-  if (item.status == "finished" && typeof item.final_mark == "number")
+  if (typeof item.final_mark == "number")
     return (
       <ProjectStyle>
         <ProjectTitleStyle>{item.project.name}</ProjectTitleStyle>
